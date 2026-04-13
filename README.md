@@ -1,10 +1,10 @@
 # INTENTA — AI-Native Intent-Centric Software Development System
 
-#From Intent to System — Fully Local, Fully Autonomous
+# From Intent to System — Fully Local, Fully Autonomous
 
 
 
-#📱 UI Preview
+## 📱 UI Preview
 
 <p align="center">
   <img src="./assets/1.png" width="250"/>
