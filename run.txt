@@ -1,0 +1,84 @@
+=== INTENTA SYSTEM STARTUP COMMANDS ===
+
+Step-by-step commands to run the INTENTA system on your Mac.
+Open 4 separate terminal windows/tabs and run one block in each.
+
+
+--- TERMINAL 1: OLLAMA (Mistral 7B LLM) ---
+# Start the Ollama container and pull Mistral (only needed once).
+# If already running, skip this step.
+export PATH=$PATH:/Applications/Docker.app/Contents/Resources/bin:/usr/local/bin:/opt/homebrew/bin
+docker run -d --name intenta-ollama -p 11434:11434 ollama/ollama
+docker exec intenta-ollama ollama pull mistral
+
+
+--- TERMINAL 2: MONGODB ---
+# Start MongoDB via Docker
+export PATH=$PATH:/Applications/Docker.app/Contents/Resources/bin:/usr/local/bin:/opt/homebrew/bin
+docker run -d -p 27017:27017 --name intenta-mongo-db -e MONGO_INITDB_DATABASE=intenta mongo:7.0
+
+# Tip: Open MongoDB Compass to inspect data at any time:
+open -a "MongoDB Compass"
+# Connect to: mongodb://localhost:27017
+# ─ intenta database
+#   ├── auth_users    ← registered accounts (bcrypt-hashed passwords)
+#   ├── auth_logs     ← immutable login audit trail
+#   ├── intent_sessions ← generated architecture designs
+#   └── login_logs    ← legacy Firebase tracking (superseded)
+
+
+--- TERMINAL 3: FASTAPI BACKEND ---
+cd /Users/ai/Projecta/Intenta/backend
+source venv/bin/activate
+export OLLAMA_BASE_URL=http://localhost:11434
+export MONGODB_URL=mongodb://localhost:27017
+# Optional: set a strong JWT secret for production
+# export JWT_SECRET=$(openssl rand -hex 32)
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+# Swagger UI available at: http://localhost:8000/docs
+
+
+--- TERMINAL 4: REACT NATIVE FRONTEND ---
+cd /Users/ai/Projecta/Intenta/frontend
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+npx expo start --web --port 8081
+
+# App available at: http://localhost:8081
+
+
+=== LOCAL AUTH SYSTEM — QUICK REFERENCE ===
+
+All auth is 100% local. No Firebase. No cloud. No external APIs.
+
+POST /auth/signup    → Register a new user
+POST /auth/login     → Get a JWT token (2-hour expiry)
+GET  /auth/me        → Get current user profile (JWT required)
+GET  /auth/users     → List all users (admin role only)
+POST /generate       → Generate architecture (JWT required)
+
+Password rules: min 8 chars, at least 1 letter + 1 number
+Roles: user (default), admin
+
+Example — Signup:
+  curl -X POST http://localhost:8000/auth/signup \
+    -H "Content-Type: application/json" \
+    -d '{"email":"you@company.com","password":"Secure123"}'
+
+Example — Login + get token:
+  TOKEN=$(curl -s -X POST http://localhost:8000/auth/login \
+    -H "Content-Type: application/json" \
+    -d '{"email":"you@company.com","password":"Secure123"}' \
+    | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
+
+Example — Call protected endpoint:
+  curl http://localhost:8000/auth/me \
+    -H "Authorization: Bearer $TOKEN"
+
+Note: If MongoDB is offline, the auth system falls back to an
+in-memory store automatically so development never blocks.
+Data persists across requests but resets on server restart.
+
+
+npx tsc --noEmit    
