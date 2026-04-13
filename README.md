@@ -200,7 +200,7 @@ pytest
 ⸻
 
 🧱 Project Structure
-
+<p>
 intenta/
 ├── backend/
 │   ├── app/
@@ -210,15 +210,9 @@ intenta/
 │   │   ├── db/
 │   │   └── main.py
 ├── frontend/
-├── assets/
-│   ├── 1.png
-│   ├── 2.png
-│   ├── 3.png
-│   ├── architecture.png
-│   ├── demo.gif
 ├── docker-compose.yml
 ├── README.md
-
+</p>
 
 ⸻
 
