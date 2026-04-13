@@ -4,20 +4,6 @@ From Intent to System — Fully Local, Fully Autonomous
 
 ⸻
 
-
-
-⸻
-
-🎥 Demo
-
-<p align="center">
-  <img src="./assets/demo.gif" width="800"/>
-</p>
-
-
-
-⸻
-
 📱 UI Preview
 
 <p align="center">
