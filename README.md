@@ -235,10 +235,10 @@ The `infra/k8s/` directories in the generated blueprints follow standard K8s con
 
 Deploy with Helm charts or `kubectl apply -f infra/k8s/`.
 
+---
 📄 License
 
 MIT License
 :::
 
-⸻
 
